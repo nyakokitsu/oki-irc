@@ -11,7 +11,7 @@ const cyrillicToTranslit = CyrillicToTranslit();
 const Banchojs = require("bancho.js");
 const client = new Banchojs.BanchoClient({ username: "ParTyPlayGo", password: process.env.ircPwd, apiKey: process.env.osuAPI });
 
-
+// Connect to irc and listen for updates
 async function connectAndRunIRC(ctx: Api) {
     await client.connect()
     console.log(new Date(), `ircbot started`);
@@ -20,6 +20,7 @@ async function connectAndRunIRC(ctx: Api) {
     });
 }
 
+// Listen updates function
 async function processMessagePM(message, ctx) {
     const user = await message.user.fetchFromAPI()
     const data = await User.findOne({osuId: user.id})
@@ -28,6 +29,7 @@ async function processMessagePM(message, ctx) {
 
     const prefix = "!"
 	if (!message.message.startsWith(prefix)) {
+        // B2tg parse
         const beatmapId = getBeatmapIdFromUrl(message.message).split(" ")[0]
         if (beatmapId) {
             if (data.tgId) {
@@ -38,9 +40,11 @@ async function processMessagePM(message, ctx) {
             
         }
     };
+	// Commands parsing
 	const args = message.message.slice(prefix.length).trim().split(/ +/g);
 	const command = args.shift().toLowerCase();
 
+    // Commands
     if (command === "info") {
         message.user.sendMessage("Hey! Thanks for using Oki-Chan irc bot. loveyou. [https://oki.nyako.tk bot link]")
     } else if (command === "help") {
@@ -66,12 +70,6 @@ async function processMessagePM(message, ctx) {
         } else {
             message.user.sendMessage("ERR: Not found last records =(")
         }
-    } else if (command === "anekdot") {
-        // http://rzhunemogu.ru/RandJSON.aspx?CType=1
-        /*const { data } = await axios.get("http://rzhunemogu.ru/RandJSON.aspx?CType=1")
-        console.log(data)*/
-        message.user.sendMessage("anekdoty ne rabotayt =(")
-
     }
 
 
